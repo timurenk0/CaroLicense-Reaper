@@ -1,0 +1,9 @@
+const Header = () => {
+  return (
+    <header className="bg-black/40 py-2 px-4 flex justify-between">
+        <h1 className="text-lg font-semibold text-whi">CaroLicense Reaper</h1>
+    </header>
+  )
+}
+
+export default Header
