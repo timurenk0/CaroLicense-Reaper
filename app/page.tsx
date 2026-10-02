@@ -2,6 +2,7 @@
 
 import CSVUploadForm from "@/COMPONENTS/CSVUploadForm";
 import ErrorCard from "@/COMPONENTS/ErrorCard";
+import Logger from "@/COMPONENTS/Logger";
 import StudentsList from "@/COMPONENTS/StudentsList";
 import { ServerError, StudentRow } from "@/utils/types";
 import { Send } from "@mui/icons-material";
@@ -57,12 +58,15 @@ const Dashboard = () => {
           </div>
 
         </div>
+
+        <div className="flex flex-col">
+          <Logger logRows={[]} />
+        </div>
       </section>
       
       {err && (
         <ErrorCard error={err} onClose={setErr} />
       )}
-
     </>
   )
 }
