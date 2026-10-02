@@ -17,11 +17,16 @@ export async function POST(req: NextRequest) {
             status: 400
         });
 
+        console.log("csv", csv);
+
         const rows: StudentsCSV[] = parse(await csv.text(), {
             columns: true,
             skip_empty_lines: true,
-            trim: true
+            trim: true,
+            relax_column_count: true
         });
+
+        console.log("rows", rows);
 
         if (!rows[0] || !("Email Address" in rows[0])) throw new CustomApiError({
             code: "INVALID_FILE_FORMAT",
@@ -32,6 +37,8 @@ export async function POST(req: NextRequest) {
 
         const ids = rows.map((r, idx) => !r["Email Address"] ? idx+2 : null).filter(r => r !== null);
 
+        console.log("ids", ids);
+
         if (ids.length > 0) throw new CustomApiError({
             code: "CORRUPT_FILE",
             message: "Corrupt .csv file",
@@ -41,12 +48,28 @@ export async function POST(req: NextRequest) {
 
         const students = normalizeStudents(rows);
 
+        console.log("students", students);
+
         return res.json({
             filename: csv.name,
             size: csv.size,
             students
         }, { status: 201 });
     } catch (error) {
-        return res.json(error);
+        console.error(error);
+        if (error instanceof CustomApiError) {
+            return res.json(
+                error,
+                { status: error.status }
+            )
+        }
+    
+        return res.json(
+            {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "An unexpected error occurred"
+            },
+            { status: 500 }
+        )
     }
 }

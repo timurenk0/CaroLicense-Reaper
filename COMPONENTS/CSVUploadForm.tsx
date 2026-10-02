@@ -40,11 +40,13 @@ const CSVUploadForm = ({
 
             const data = await res.json();
             if (!res.ok) {
-                setErr(data.error);
+                setErr(data as ServerError);
                 setStudentRows([]);
-                throw new Error(data.error.message);
+                setFile(null);
+                throw new Error(data.message);
             }
 
+            console.log("data", data);
             setStudentRows(data.students);
 
             return data;
