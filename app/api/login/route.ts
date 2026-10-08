@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse as res } from "next/server";
+import { cookies } from "next/headers";
 import dotenv from "dotenv";
 import { GraphCredentials } from "@/BACKEND/types";
-import { getConfig, storeConfig } from "@/BACKEND/services/config-store.service";
+import { storeConfig } from "@/BACKEND/services/config-store.service";
 import { CustomApiError } from "@/BACKEND/utils/CustomErrorBuilder";
 
 
@@ -10,6 +11,7 @@ export async function POST(req: NextRequest) {
         const formData = await req.formData();
 
         const env = formData.get("env") as File;
+        console.log(env);
         if (!env) throw new CustomApiError({
             code: "NO_FILE_UPLOAD",
             message: "No .env file uploaded",
@@ -27,10 +29,20 @@ export async function POST(req: NextRequest) {
             })
         }
 
-        const configId = crypto.randomUUID();
-        storeConfig(configId, credentials);
+        const sessionId = crypto.randomUUID();
+        storeConfig(sessionId, credentials);
 
-        return res.json(configId, { status: 201 });
+        const cookieStore = await cookies();
+        
+        cookieStore.set("sessionId", sessionId, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 30 * 60,
+            path: "/"
+        });
+
+        return res.json({ status: 201 });
     } catch (error) {
         return res.json(error);
     }

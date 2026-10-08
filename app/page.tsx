@@ -15,23 +15,30 @@ const Dashboard = () => {
   const [execTime, setExecTime] = useState(0);
 
 
-  const mutation = async () => {
-    try {
-      if (!studentRows || studentRows.length === 0) {
-        setErr({
-          code: "EMPTY_STUDENT_ROWS_ERROR",
-          message: "Student data not found",
-          hint: "Double-check",
-          status: 400
-        });
-        return
-      }
+  // const mutation = async () => {
+  //   try {
+  //     if (!studentRows || studentRows.length === 0) {
+  //       setErr({
+  //         code: "EMPTY_STUDENT_ROWS_ERROR",
+  //         message: "Student data not found",
+  //         hint: "Double-check",
+  //         status: 400
+  //       });
+  //       return
+  //     }
 
+  //     const res = await fetch("/api/start", {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         configId,
+  //         students: studentRows
+  //       })
+  //     })
 
-    } catch (error) {
+  //   } catch (error) {
       
-    }
-  }
+  //   }
+  // }
 
   console.error(err);
 

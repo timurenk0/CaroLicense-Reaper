@@ -1,15 +1,31 @@
-import type { GraphCredentials } from "../types";
+import { GraphCredentials } from "../types"
 
-const configs = new Map<string, GraphCredentials>();
-
-export function storeConfig(configId: string, credentials: GraphCredentials) {
-    configs.set(configId, credentials);
+type Session = {
+    credentials: GraphCredentials,
+    expiresAt: number
 }
 
-export function getConfig(configId: string) {
-    return configs.get(configId);
+const sessions = new Map<string, Session>();
+
+export function storeConfig(
+    sessionId: string,
+    credentials: GraphCredentials,
+    ttlMs = 30 * 60 * 1000
+) {
+    sessions.set(sessionId, {
+        credentials,
+        expiresAt: Date.now() + ttlMs
+    });
 }
 
-export function removeConfig(configId: string) {
-    configs.delete(configId);
+export function getConfig(sessionId: string) {
+    const session = sessions.get(sessionId);
+    if (!session) return null;
+
+    if (Date.now() >= session.expiresAt) {
+        sessions.delete(sessionId);
+        return null;
+    }
+
+    return session.credentials;
 }
