@@ -1,14 +1,16 @@
 'use client'
 
 import { LogRow } from '@/utils/types';
-import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import { ArrowDownward, ArrowUpward, Delete } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import React, { useState } from 'react'
 
 const Logger = ({
-    logRows
+    logRows,
+    setLogRows
 }: {
-    logRows: LogRow[]
+    logRows: LogRow[],
+    setLogRows: (x: any[]) => void
 }) => {
     const [showLogs, setShowLogs] = useState(false);
 
@@ -20,7 +22,7 @@ const Logger = ({
     }
   
   return (
-    <div>
+    <div className="h-full min-h-0">
         <Button
             hidden={showLogs}
             onClick={() => setShowLogs(true)}
@@ -30,9 +32,18 @@ const Logger = ({
             color="inherit"
         >Show Logs</Button>
 
-        <div hidden={!showLogs} className="bg-gray-200 h-full flex flex-col overflow-hidden">
+        <div hidden={!showLogs} className="bg-gray-200 min-h-0 h-full flex flex-col overflow-hidden">
             <div className="bg-gray-400 py-1 px-2 flex justify-between items-center w-full">
                 <p className="font-semibold shrink-0">Logger</p>
+                <Button
+                    variant="text"
+                    sx={{
+                        color: "white"
+                    }}
+                    size="small"
+                    onClick={() => setLogRows([])}
+                    startIcon={<Delete />}
+                >Clear Logs</Button>
                 <Button
                     variant="contained"
                     color="inherit"
@@ -42,7 +53,7 @@ const Logger = ({
                 >Hide Logs</Button>
             </div>
 
-            <div className="p-2 flex-1 overflow-y-auto overflow-x-clip flex flex-col gap-y-2">
+            <div className="p-2 flex-1 min-h-0 overflow-y-auto overflow-x-clip flex flex-col gap-y-2">
                 {logRows.length > 0 ? logRows.map((lr, idx) => (
                     <p key={idx}>
                         <b className={`font-bold ${levelColors[lr.level]}`}>&gt;[{lr.level.toUpperCase()}] </b>

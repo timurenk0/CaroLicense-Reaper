@@ -7,7 +7,7 @@ export function storeJob(jobId: string, job: Job) {
 }
 
 export function getJob(jobId: string) {
-    jobs.get(jobId)
+    return jobs.get(jobId)
 }
 
 export function deleteJob(jobId: string) {

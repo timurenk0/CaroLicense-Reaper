@@ -27,7 +27,7 @@ const LoginPage = () => {
             console.log(data);
             if (!res.ok) {
                 setErr(data);
-                throw new Error(data.message);
+                throw new Error(data);
             }
 
             router.push("/");

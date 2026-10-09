@@ -59,12 +59,13 @@ const Dashboard = () => {
               timestamp: update.timestamp
             }
           ]);
-        }
 
+        }
+        
         setStudentRows(current => current.map(c => c.email === update.email ? {
           ...c,
-          status: c.status,
-          message: c.message
+          status: update.status,
+          message: update.message
         }: c));
 
         if (update.type === "complete") {
@@ -79,39 +80,43 @@ const Dashboard = () => {
     }
   }
 
+  console.log(studentRows);
+  
   return (
-    <>
-      <section className="grid grid-cols-2 gap-8 h-full min-h-0" hidden={!!err}>
-        <div className="flex flex-col">
-          <p>You've successfully logged in!</p>
+    <main className="p-4 h-full min-h-0 overflow-hidden flex flex-col">
+      <div className="h-full min-h-0 flex flex-col">
+        <div className="grid grid-cols-2 gap-8 h-full min-h-0" hidden={!!err}>
+          <section className="flex flex-col min-h-0 h-full">
+            <p>You've successfully logged in!</p>
 
-          <CSVUploadForm setStudentRows={setStudentRows} setErr={setErr} />
+            <CSVUploadForm setStudentRows={setStudentRows} setErr={setErr} />
 
-          <div className="my-4 flex justify-end">
-            <Button
-              disabled={studentRows.length === 0}
-              variant="outlined"
-              color="success"
-              endIcon={<Send />}
-              onClick={mutation}
-            >Start</Button>
-          </div>
+            <div className="my-4 flex justify-end">
+              <Button
+                disabled={studentRows.length === 0}
+                variant="outlined"
+                color="success"
+                endIcon={<Send />}
+                onClick={mutation}
+              >Start</Button>
+            </div>
 
-          <div className="flex-1">
-            <StudentsList studentRows={studentRows} execTime={execTime} />
-          </div>
+            <div className="flex-1 min-h-0">
+              <StudentsList studentRows={studentRows} execTime={execTime} />
+            </div>
 
+          </section>
+
+          <section className="flex flex-col min-h-0 h-full">
+            <Logger logRows={logRows} setLogRows={setLogRows} />
+          </section>
         </div>
-
-        <div className="flex flex-col">
-          <Logger logRows={logRows} />
-        </div>
-      </section>
-      
-      {err && (
-        <ErrorCard error={err} onClose={setErr} />
-      )}
-    </>
+        
+        {err && (
+          <ErrorCard error={err} onClose={setErr} />
+        )}
+      </div>
+    </main>
   )
 }
 

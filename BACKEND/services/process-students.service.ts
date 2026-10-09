@@ -27,7 +27,7 @@ export async function processStudents(
                 sendJobUpdate(jobId, {
                     email: student.email,
                     status: "success",
-                    miessage: "Licenses removed successfully"
+                    message: "Licenses removed successfully"
                 });
                 sendLogUpdate(jobId, `Revoked all licenses from student ${student.email}`, "success");
             } catch (error) {

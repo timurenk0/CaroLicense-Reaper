@@ -1,4 +1,7 @@
 import { addClient, removeClient } from "@/BACKEND/services/client-store.service";
+import { getJob } from "@/BACKEND/services/job-store.service";
+import { processStudents } from "@/BACKEND/services/process-students.service";
+import { CustomApiError } from "@/BACKEND/utils/CustomErrorBuilder";
 import { type NextRequest, NextResponse } from "next/server";
 
 
@@ -16,6 +19,16 @@ export async function GET(
                 controllerRef = controller;
 
                 addClient(jobId, controller);
+
+                const job = getJob(jobId);
+                if (!job) throw new CustomApiError({
+                    code: "JOB_INSTANCE_NOT_FOUND",
+                    message: "Passed jobId is not associated with any pending job",
+                    hint: "The reference jobId may be expired. Try refreshing the page and start again",
+                    status: 404
+                });
+
+                processStudents(jobId, job.students, job.credentials).catch(err => console.error(`Job ${jobId} failed`, err));
             },
             cancel() {
                 removeClient(jobId);

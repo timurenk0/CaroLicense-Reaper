@@ -29,9 +29,9 @@ export async function POST(req: NextRequest) {
         console.log("rows", rows);
 
         if (!rows[0] || !("Email Address" in rows[0])) throw new CustomApiError({
-            code: "INVALID_FILE_FORMAT",
+            code: "VALIDATION_ERROR",
             message: "Invalid .csv file format",
-            hint: "Double-check credentials file content. Required fields are TENANT_ID, CLIENT_ID, CLIENT_SECRET",
+            hint: "Double-check students file content. Required field: 'Email Address'. Optional field: 'ID's'",
             status: 400
         });
 

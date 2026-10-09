@@ -34,7 +34,7 @@ export async function processSingleStudent(
 
 async function fetchStudentId(jobId: string, client: Client, email: string) {
     try {
-        const studentData = await client.api(`/users$filter=mail eq '${email}'`).get();
+        const studentData = await client.api(`/users?$filter=mail eq '${email}'`).get();
         sendLogUpdate(jobId, `Fetched user ID for student "${email}"`);
 
         return studentData;

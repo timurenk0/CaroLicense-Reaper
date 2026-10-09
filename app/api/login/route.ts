@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         });
 
         return res.json({ status: 201 });
-    } catch (error) {
-        return res.json(error);
+    } catch (error: any) {
+        return res.json(error, { status: error instanceof CustomApiError ? error.status : 500 });
     }
 }

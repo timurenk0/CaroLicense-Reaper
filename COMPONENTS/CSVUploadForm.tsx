@@ -38,8 +38,6 @@ const CSVUploadForm = ({
                 body: formData
             });
 
-            console.log(res);
-
             const data = await res.json();
             if (!res.ok) {
                 setErr(data as ServerError);
@@ -48,7 +46,6 @@ const CSVUploadForm = ({
                 throw new Error(data.message);
             }
 
-            console.log("data", data);
             setStudentRows(data.students);
 
             return data;

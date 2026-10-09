@@ -17,15 +17,15 @@ const StudentsList = ({
         "success": <Done color="success" />,
         "error": <Error color="error" />
     };
-  
+
   return (
-    <div className="fex flex-col overflow-hidden">
+    <div className="flex flex-col h-full min-h-0 overflow-hidden">
         <p className="bg-gray-200 px-2">
             Student List (Processed: {processedCount}/{studentRows.length})
             |
             Finished in {execTime === 0 ? <Timelapse /> : (execTime/1000).toFixed(2)}s
         </p>
-        <TableContainer component={Paper} className="flex-1" sx={{ overflow: "auto" }}>
+        <TableContainer component={Paper} className="flex-1 min-h-0" sx={{ overflow: "auto" }}>
             <Table stickyHeader>
                 <TableHead>
                     <TableRow>
