@@ -9,8 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@azure/identity": "^4.13.3",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "@mui/icons-material": "^9.4.0",
     "@mui/material": "^9.4.0",
     "csv-parse": "^7.0.2",
