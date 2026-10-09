@@ -30,7 +30,7 @@ const LoginPage = () => {
                 throw new Error(data.message);
             }
 
-            // router.push("/");
+            router.push("/");
             return data;
         } catch (error) {
             console.error(error);

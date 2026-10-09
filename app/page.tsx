@@ -4,7 +4,7 @@ import CSVUploadForm from "@/COMPONENTS/CSVUploadForm";
 import ErrorCard from "@/COMPONENTS/ErrorCard";
 import Logger from "@/COMPONENTS/Logger";
 import StudentsList from "@/COMPONENTS/StudentsList";
-import { ServerError, StudentRow } from "@/utils/types";
+import { LogRow, ServerError, StudentRow } from "@/utils/types";
 import { Send } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { useState } from "react";
@@ -12,35 +12,72 @@ import { useState } from "react";
 const Dashboard = () => {
   const [err, setErr] = useState<ServerError | null>(null);
   const [studentRows, setStudentRows] = useState<StudentRow[]>([]);
+  const [logRows, setLogRows] = useState<LogRow[]>([]);
   const [execTime, setExecTime] = useState(0);
 
 
-  // const mutation = async () => {
-  //   try {
-  //     if (!studentRows || studentRows.length === 0) {
-  //       setErr({
-  //         code: "EMPTY_STUDENT_ROWS_ERROR",
-  //         message: "Student data not found",
-  //         hint: "Double-check",
-  //         status: 400
-  //       });
-  //       return
-  //     }
+  const mutation = async () => {
+    try {
+      if (!studentRows || studentRows.length === 0) {
+        setErr({
+          code: "EMPTY_STUDENT_ROWS_ERROR",
+          message: "Student data not found",
+          hint: "Double-check",
+          status: 400
+        });
+        return
+      }
 
-  //     const res = await fetch("/api/start", {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         configId,
-  //         students: studentRows
-  //       })
-  //     })
+      const res = await fetch("/api/start", {
+        method: "POST",
+        body: JSON.stringify({
+          students: studentRows
+        })
+      });
 
-  //   } catch (error) {
-      
-  //   }
-  // }
+      const data = await res.json();
+      if (!res.ok) {
+        setErr(data);
+        return;
+      }
 
-  console.error(err);
+      const { jobId } = data;
+
+      const eventSource = new EventSource(`/api/jobs/${jobId}/events`);
+
+      const start = performance.now();
+      eventSource.onmessage = (e) => {
+        const update = JSON.parse(e.data);
+        console.log("Student update:", update);
+
+        if (update.type === "log") {
+          setLogRows(current => [
+            ...current,
+            {
+              level: update.level,
+              message: update.message,
+              timestamp: update.timestamp
+            }
+          ]);
+        }
+
+        setStudentRows(current => current.map(c => c.email === update.email ? {
+          ...c,
+          status: c.status,
+          message: c.message
+        }: c));
+
+        if (update.type === "complete") {
+          eventSource.close();
+          const end = performance.now();
+          setExecTime(end-start);
+        }
+      }
+    } catch (error) {
+      console.error(error); 
+      return;
+    }
+  }
 
   return (
     <>
@@ -56,7 +93,7 @@ const Dashboard = () => {
               variant="outlined"
               color="success"
               endIcon={<Send />}
-              // onClick={mutation}
+              onClick={mutation}
             >Start</Button>
           </div>
 
@@ -67,7 +104,7 @@ const Dashboard = () => {
         </div>
 
         <div className="flex flex-col">
-          <Logger logRows={[]} />
+          <Logger logRows={logRows} />
         </div>
       </section>
       
